@@ -28,4 +28,7 @@ class Cryptocurrency
     {
         return $this->price;
     }
+    public function setId($id){
+        $this->id=$id;
+    }
 }

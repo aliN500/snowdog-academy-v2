@@ -6,6 +6,7 @@ use Snowdog\Academy\Model\Cryptocurrency;
 use Snowdog\Academy\Model\CryptocurrencyManager;
 use Snowdog\Academy\Model\UserCryptocurrencyManager;
 use Snowdog\Academy\Model\UserManager;
+use Snowdog\Academy\Model\User;
 
 class Cryptos
 {
@@ -49,15 +50,33 @@ class Cryptos
 
     public function buyPost(string $id): void
     {
+        extract($_POST);
         // TODO
         // verify if user is logged in
-        // use $this->userCryptocurrencyManager->addCryptocurrencyToUser() method
+        $user = $this->userManager->getByLogin((string) $_SESSION['login']);
+        if (!$user) {
+            header('Location: /account');
+            return;
+        }
 
+        $userId = $user->getId();
+        is_int($userId);
+        $userAmount = $amount;
+        if (is_int($userId) && is_int($amount)) {
+            header('Location: /account');
+            return;
+        }
+        $crypto = new Cryptocurrency();
+        $crypto->setId($id);
+
+        // use $this->userCryptocurrencyManager->addCryptocurrencyToUser() method
+        $cryptoCurrencyBuy = $this->userCryptocurrencyManager->addCryptocurrencyToUser($userId, $crypto, $userAmount);
         header('Location: /cryptos');
     }
 
     public function sell(string $id): void
     {
+       
         $user = $this->userManager->getByLogin((string) $_SESSION['login']);
         if (!$user) {
             header('Location: /account');
@@ -79,7 +98,7 @@ class Cryptos
         // TODO
         // verify if user is logged in
         // use $this->userCryptocurrencyManager->subtractCryptocurrencyFromUser() method
-
+      
         header('Location: /cryptos');
     }
 
