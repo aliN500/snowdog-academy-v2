@@ -46,5 +46,11 @@ class CryptocurrencyManager
     public function updatePrice(string $id, float $price): void
     {
         // TODO
+        $query = $this->database->query('SELECT  GROUP_CONCAT ( id SEPARATOR', ')  FROM cryptocurrencies' );
+        $query->execute();
+        $res=$query->fetchAll();
+        print_r($res);die();
+       
+
     }
 }
