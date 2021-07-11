@@ -55,4 +55,36 @@ class UserManager
     {
         return hash('sha512', $password);
     }
+    public function AddFundsToUser(int $userId,float $Funds): void
+    { 
+    
+        // TODO
+        $query = $this->database->prepare('SELECT * FROM users WHERE id = :userId');
+        $query->bindParam(':userId', $userId, Database::PARAM_INT);
+        $query->execute();
+        $res=$query->fetchAll();
+ 
+        if (count($res)==1) {
+            # code...
+            $updatedFunds=$res[0]['funds'] + $Funds;
+            
+        
+        }
+        
+        if($updatedFunds>0){
+           $updatedFunds=strval($updatedFunds);
+            $sql = $this->database->prepare(' UPDATE users SET funds=:funds WHERE id = :userId' );
+            $sql->bindParam(':userId', $userId, Database::PARAM_INT);
+            $sql->bindParam(':funds', $updatedFunds , Database::PARAM_STR);
+            $sql->execute();
+            
+        }
+        else{
+            print_r("Invalid Funds");die();
+        }
+    
+        
+    }
+            
+
 }

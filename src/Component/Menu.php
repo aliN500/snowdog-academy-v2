@@ -40,10 +40,10 @@ class Menu
     private function getMenus(): array
     {
         usort($this->items, fn ($a, $b) => $a[self::SORT_ORDER] <=> $b[self::SORT_ORDER]);
-
         return array_map(fn ($item) => $item[self::CLASS_NAME], $this->items);
+     
     }
-
+     
     private function renderItem(string $className): void
     {
         $this->container->call($className);

@@ -10,13 +10,14 @@ use Snowdog\Academy\Controller\Index;
 use Snowdog\Academy\Controller\Login;
 use Snowdog\Academy\Controller\Register;
 use Snowdog\Academy\Controller\Cryptos;
+use Snowdog\Academy\Controller\Funds;
 use Snowdog\Academy\Menu\AccountMenu;
 use Snowdog\Academy\Menu\LoginMenu;
 use Snowdog\Academy\Menu\LogoutMenu;
 use Snowdog\Academy\Menu\RegisterMenu;
 use Snowdog\Academy\Repository\CommandRepository;
 use Snowdog\Academy\Repository\RouteRepository;
-
+use Snowdog\Academy\Menu\FundsMenu;
 RouteRepository::registerRoute('GET', '/', Index::class, 'index');
 RouteRepository::registerRoute('GET', '/login', Login::class, 'index');
 RouteRepository::registerRoute('POST', '/login', Login::class, 'login');
@@ -29,13 +30,14 @@ RouteRepository::registerRoute('POST', '/cryptos/buy/{id}', Cryptos::class, 'buy
 RouteRepository::registerRoute('GET', '/cryptos/sell/{id}', Cryptos::class, 'sell');
 RouteRepository::registerRoute('POST', '/cryptos/sell/{id}', Cryptos::class, 'sellPost');
 RouteRepository::registerRoute('GET', '/account', Account::class, 'index');
+RouteRepository::registerRoute('GET', '/account/addFunds', Account::class, 'DisplayFundsAdd');
 RouteRepository::registerRoute('POST', '/account/addFunds', Account::class, 'addFunds');
 
 Menu::register(LoginMenu::class, 100);
 Menu::register(RegisterMenu::class, 200);
 Menu::register(AccountMenu::class, 200);
 Menu::register(LogoutMenu::class, 900);
-
+Menu::register(FundsMenu::class, 1000);
 CommandRepository::registerCommand('test_db_connection', TestDbConnection::class, 'Tests database connection');
 CommandRepository::registerCommand('migrate_db', Migrate::class, 'Performs database migration');
 CommandRepository::registerCommand('update_prices', UpdatePrices::class, 'Updates cryptocurrencies prices in database');
