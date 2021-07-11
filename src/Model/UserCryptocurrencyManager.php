@@ -35,9 +35,37 @@ class UserCryptocurrencyManager
     }
 
     public function subtractCryptocurrencyFromUser(int $userId, Cryptocurrency $cryptocurrency, int $amount): void
-    {
+    { 
         // TODO
-    }
+    
+         $query= $this->database->prepare('SELECT amount,cryptocurrency_id FROM user_cryptocurrencies WHERE user_Id=:userId');
+         $query->bindParam(':userId', $userId, Database::PARAM_INT);
+         $query->execute();
+        $result = $query->fetchAll();
+        $cryptocurrencyId=  $cryptocurrency->getId();
+        foreach($result as $row){
+            if($amount > $row['amount']){
+                print_r('Invalid Amount');die();
+            }
+           elseif ($amount <= $row['amount']) {
+               # code...
+                 if($cryptocurrency->getId() == $row['cryptocurrency_id']  ){
+                $oldAmount=$row['amount'];
+                $NewAmount=$oldAmount-$amount;
+                $sql = $this->database->prepare(' UPDATE user_cryptocurrencies SET amount=:amount WHERE user_Id=:userId AND cryptocurrency_id = :cryptocurrencyId' );
+                $sql->bindParam(':userId', $userId, Database::PARAM_INT);
+                $sql->bindParam(':cryptocurrencyId', $cryptocurrencyId, Database::PARAM_STR);
+                $sql->bindParam(':amount', $NewAmount, Database::PARAM_INT);
+                $sql->execute();
+
+            }
+        }
+            
+
+     }
+     
+
+     }
 
     public function getUserCryptocurrency(int $userId, string $cryptocurrencyId): ?UserCryptocurrency
     {
