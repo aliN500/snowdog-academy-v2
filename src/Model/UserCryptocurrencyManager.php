@@ -106,11 +106,26 @@ class UserCryptocurrencyManager
     public function subtractCryptocurrencyFromUser(int $userId, Cryptocurrency $cryptocurrency, int $amount): void
     { 
         // TODO
-    
-         $query= $this->database->prepare('SELECT amount,cryptocurrency_id FROM user_cryptocurrencies WHERE user_Id=:userId');
+        $cryptocurrencyId=$cryptocurrency->getId();
+         $query= $this->database->prepare('SELECT amount,cryptocurrency_id,funds,price FROM user_cryptocurrencies LEFT JOIN users ON users.id=user_cryptocurrencies.user_id LEFT JOIN cryptocurrencies ON cryptocurrencies.id=user_cryptocurrencies.cryptocurrency_id WHERE user_Id=:userId AND cryptocurrency_id= :cryptocurrencyId');
          $query->bindParam(':userId', $userId, Database::PARAM_INT);
+         $query->bindParam(':cryptocurrencyId', $cryptocurrencyId, Database::PARAM_STR);
+
          $query->execute();
         $result = $query->fetchAll();
+        foreach ($result as $r) {
+            # code...
+            $NewAmount= $r[0]-$amount;
+            $Price= $r[3]*$amount; 
+            $funds=$r[2]+$Price;
+          
+            // print_r([$NewAmount,$Price,$funds]);die();
+        }
+      
+        // $NewAmount= $result[0][0]-$amount;
+        // $Price= $result[0][3]*$amount; 
+        // $funds=$result[0][2]+$Price;
+        // print_r($funds);die();
         $cryptocurrencyId=  $cryptocurrency->getId();
         foreach($result as $row){
             if($amount > $row['amount']){
@@ -119,12 +134,14 @@ class UserCryptocurrencyManager
            elseif ($amount <= $row['amount']) {
                # code...
                  if($cryptocurrency->getId() == $row['cryptocurrency_id']  ){
-                $oldAmount=$row['amount'];
-                $NewAmount=$oldAmount-$amount;
-                $sql = $this->database->prepare(' UPDATE user_cryptocurrencies SET amount=:amount WHERE user_Id=:userId AND cryptocurrency_id = :cryptocurrencyId' );
+                // $oldAmount=$row['amount'];
+                // $NewAmount=$oldAmount-$amount;
+                // $sql = $this->database->prepare(' UPDATE user_cryptocurrencies SET amount=:amount WHERE user_Id=:userId AND cryptocurrency_id = :cryptocurrencyId' );
+                $sql = $this->database->prepare(' UPDATE users,user_cryptocurrencies SET funds=:funds , amount=:amount  WHERE id=:userId AND user_cryptocurrencies.cryptocurrency_id=:cryptocurrencyId'  );
+                $sql->bindParam(':funds', $funds, Database::PARAM_INT);    
+                $sql->bindParam(':amount', $NewAmount, Database::PARAM_INT);
                 $sql->bindParam(':userId', $userId, Database::PARAM_INT);
                 $sql->bindParam(':cryptocurrencyId', $cryptocurrencyId, Database::PARAM_STR);
-                $sql->bindParam(':amount', $NewAmount, Database::PARAM_INT);
                 $sql->execute();
 
             }

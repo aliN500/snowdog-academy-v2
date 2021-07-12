@@ -23,11 +23,14 @@ require_once(__DIR__ . '/../common/header.phtml'); ?>
             </thead>
             <tbody>
             <?php foreach ($this->getUserCryptocurrencies() as $currency): /** @var UserCryptocurrency $currency */?>
+                <?php if( $currency->getAmount()>0 ): ?>
                 <tr>
+                    
                     <td><?= $currency->getName()?></td>
                     <td><?= $currency->getAmount()?></td>
                     <td><a href="/cryptos/sell/<?= $currency->getId() ?>">Sell</a></td>
                 </tr>
+                <?php endif; ?>
             <?php endforeach; ?>
             </tbody>
         </table>
