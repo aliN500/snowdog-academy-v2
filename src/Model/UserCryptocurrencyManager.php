@@ -79,7 +79,7 @@ class UserCryptocurrencyManager
                     $remainFunds=$funds-$totalPrice;
                     $UpdateAmount=$check[0][1]+$amount;
            
-                    $sql = $this->database->prepare(' UPDATE users,user_cryptocurrencies SET funds=:funds , amount=:amount  WHERE id=:userId AND user_cryptocurrencies.cryptocurrency_id=:cryptocurrencyId'  );
+                    $sql = $this->database->prepare(' UPDATE users,user_cryptocurrencies SET funds=:funds , amount=:amount  WHERE user_id=:userId AND user_cryptocurrencies.cryptocurrency_id=:cryptocurrencyId'  );
                     $sql->bindParam(':funds', $remainFunds, Database::PARAM_INT);
                     $sql->bindParam(':amount', $UpdateAmount, Database::PARAM_INT);
                     $sql->bindParam(':userId', $userId, Database::PARAM_INT);
@@ -119,13 +119,10 @@ class UserCryptocurrencyManager
             $Price= $r[3]*$amount; 
             $funds=$r[2]+$Price;
           
-            // print_r([$NewAmount,$Price,$funds]);die();
+            
         }
       
-        // $NewAmount= $result[0][0]-$amount;
-        // $Price= $result[0][3]*$amount; 
-        // $funds=$result[0][2]+$Price;
-        // print_r($funds);die();
+    
         $cryptocurrencyId=  $cryptocurrency->getId();
         foreach($result as $row){
             if($amount > $row['amount']){
@@ -134,10 +131,8 @@ class UserCryptocurrencyManager
            elseif ($amount <= $row['amount']) {
                # code...
                  if($cryptocurrency->getId() == $row['cryptocurrency_id']  ){
-                // $oldAmount=$row['amount'];
-                // $NewAmount=$oldAmount-$amount;
-                // $sql = $this->database->prepare(' UPDATE user_cryptocurrencies SET amount=:amount WHERE user_Id=:userId AND cryptocurrency_id = :cryptocurrencyId' );
-                $sql = $this->database->prepare(' UPDATE users,user_cryptocurrencies SET funds=:funds , amount=:amount  WHERE id=:userId AND user_cryptocurrencies.cryptocurrency_id=:cryptocurrencyId'  );
+       
+                $sql = $this->database->prepare(' UPDATE users,user_cryptocurrencies SET funds=:funds , amount=:amount  WHERE user_id=:userId AND user_cryptocurrencies.cryptocurrency_id=:cryptocurrencyId '  );
                 $sql->bindParam(':funds', $funds, Database::PARAM_INT);    
                 $sql->bindParam(':amount', $NewAmount, Database::PARAM_INT);
                 $sql->bindParam(':userId', $userId, Database::PARAM_INT);
