@@ -7,7 +7,7 @@ require_once(__DIR__ . '/../common/header.phtml'); ?>
         <h3>Add Funds </h3>
         <form method="post" action="/account/addFunds">
             <div class="form-group">
-                <input type="text" class="form-control" id="amount" placeholder="Add Funds" name="Funds">
+                <input type="number" min="1" step="0.5" class="form-control" id="amount" placeholder="Add Funds" name="Funds">
             </div>
             <button type="submit" class="btn btn-success">Add</button>
         </form>
