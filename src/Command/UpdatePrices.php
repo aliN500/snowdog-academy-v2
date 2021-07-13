@@ -29,28 +29,40 @@ class UpdatePrices
         $query = $this->database->query("SELECT GROUP_CONCAT(id SEPARATOR ',') as ids  FROM cryptocurrencies ");
         $query->execute();
         $res=$query->fetchAll();
-   
-       if(count($res)==1){
-           $res[0]['ids'];
-          
-           $ch = curl_init("https://api.coingecko.com/api/v3/simple/price?ids=".$res[0]['ids']."&vs_currencies=USD");
-          
-           $fp = fopen("UpdatedPrices.json", "w");
-        //    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        $url = "https://api.coingecko.com/api/v3/simple/price?ids=".$res[0]['ids']."&vs_currencies=USD";
+      
 
-           curl_setopt($ch, CURLOPT_FILE, $fp);
-           curl_setopt($ch, CURLOPT_HEADER, 0);
-           $result=curl_exec($ch);
-
-           if(curl_error($ch)) {
-               fwrite($fp, curl_error($ch));
-           
+        $ch = curl_init($url);
+        curl_setopt($ch, CURLOPT_HTTPGET, true);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        $response_json = curl_exec($ch);
+        curl_close($ch);
+        $response=json_decode($response_json, true);
+    //    print_r($response);die();
+        $response;  
+        $new_array = array();  //<--- This is the new array you're building
+        
+        foreach($response as $i=>$element)
+        {
+            foreach($element as $j=>$sub_element)
+            {
+                $new_array[$j][$i] = $sub_element; //We are basically inverting the indexes
             }
+        }
+        $AllPrices=$new_array['usd'];            
+                foreach( $AllPrices as $key => $value ){
+                    
+                    $sql = $this->database->prepare(' UPDATE cryptocurrencies SET price=:price  WHERE id=:cryptocurrencyId'  );
+                    $sql->bindParam(':price', $value, Database::PARAM_INT);    
+                    $sql->bindParam(':cryptocurrencyId', $key, Database::PARAM_STR);
+                    $sql->execute();
+                }
+
+                  
            
-           curl_close($ch);
-           fclose($fp);
-          
-       }
+     
+   
+
       
         // $this->cryptocurrencyManager->updatePrice();
     }
